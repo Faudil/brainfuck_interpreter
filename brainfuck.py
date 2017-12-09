@@ -13,6 +13,14 @@ def skip_loop(code, i):
         i += 1
     return i - 1
 
+def test_overflow(buffer_size, pos, i):
+    if pos >= buffer_size:
+        raise Exception("Error buffer overflow at instruction : " + str(i))
+
+def test_underflow(pos, i):
+    if pos < 0:
+        raise Exception("Error buffer underflow at instruction : " + str(i))
+
 def interpret_brainfuck(code, buffer_size=30000):
     buffer = [0] * buffer_size
     loop_stack = []
@@ -26,8 +34,10 @@ def interpret_brainfuck(code, buffer_size=30000):
             buffer[pos] -= 1
         elif code[i] == ">":
             pos += 1
+            test_overflow(buffer_size, pos, i)
         elif code[i] == "<":
             pos -=1
+            test_underflow(pos, i)
         elif code[i] == ".":
             sys.stdout.write(chr(buffer[pos]))
         elif code[i] == ",":
